@@ -110,7 +110,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 
 	authModule := auth.NewModule(r.parser, cdc, db)
 	consensusModule := consensus.NewModule(db)
-	distrModule := distribution.NewModule(ctx.JunoConfig, sources.DistrSource, cdc, db)
+	distrModule := distribution.NewModule(sources.DistrSource, cdc, db)
 	feegrantModule := feegrant.NewModule(cdc, db)
 	historyModule := history.NewModule(ctx.JunoConfig.Chain, r.parser, cdc, db)
 	mintModule := mint.NewModule(sources.MintSource, cdc, db)
@@ -128,10 +128,10 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		feegrantModule,
 		gov.NewModule(sources.GovSource, authModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db),
 		historyModule,
-		mint.NewModule(sources.MintSource, cdc, db),
+		mintModule,
 		modules.NewModule(ctx.JunoConfig.Chain, db),
 		pricefeed.NewModule(ctx.JunoConfig, historyModule, cdc, db),
-		slashing.NewModule(sources.SlashingSource, cdc, db),
+		slashingModule,
 		stakingModule,
 	}
 }

@@ -6,8 +6,7 @@ require (
 	github.com/MonikaCat/osmosis/v6 v6.2.0-bdjuno
 	github.com/cosmos/cosmos-sdk v0.44.5
 	github.com/cosmos/gaia/v6 v6.0.0
-	github.com/cosmos/ibc-go v1.2.5
-	github.com/forbole/juno/v2 v2.0.0-20220131163637-af72e7ad8057
+	github.com/forbole/juno/v2 v2.0.0-20220223115732-dbb226a91ce9
 	github.com/go-co-op/gocron v1.11.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.3.4
@@ -37,6 +36,7 @@ require (
 	github.com/confio/ics23/go v0.6.6 // indirect
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/cosmos/iavl v0.17.2 // indirect
+	github.com/cosmos/ibc-go v1.2.5 // indirect
 	github.com/cosmos/ibc-go/v2 v2.0.2 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.11.1 // indirect
 	github.com/cosmos/ledger-go v0.9.2 // indirect

@@ -8,8 +8,6 @@ import (
 type Source interface {
 	GetValidator(height int64, valOper string) (stakingtypes.Validator, error)
 	GetValidatorsWithStatus(height int64, status string) ([]stakingtypes.Validator, error)
-	GetDelegation(height int64, delegator string, validator string) (stakingtypes.DelegationResponse, error)
-	GetDelegatorDelegations(height int64, delegator string) ([]stakingtypes.DelegationResponse, error)
 	GetDelegationsWithPagination(height int64, delegator string, pagination *query.PageRequest) (*stakingtypes.QueryDelegatorDelegationsResponse, error)
 	GetRedelegations(height int64, request *stakingtypes.QueryRedelegationsRequest) (*stakingtypes.QueryRedelegationsResponse, error)
 	GetPool(height int64) (stakingtypes.Pool, error)
