@@ -106,3 +106,15 @@ CREATE TABLE pruning
 (
     last_pruned_height BIGINT NOT NULL
 );
+
+CREATE FUNCTION messages_by_address_new(
+    "addresses" TEXT,
+    types TEXT[],
+    "limit" BIGINT = 100,
+    "offset" BIGINT = 0)
+    RETURNS SETOF message AS
+$$
+SELECT * FROM message AS m 
+WHERE (SELECT CAST(m.value AS TEXT) LIKE '%%')
+ORDER BY height DESC LIMIT "limit" OFFSET "offset"
+$$ LANGUAGE sql STABLE;
