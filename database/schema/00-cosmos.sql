@@ -83,6 +83,7 @@ CREATE TABLE message
 CREATE INDEX message_transaction_hash_index ON message (transaction_hash);
 CREATE INDEX message_type_index ON message (type);
 CREATE INDEX message_involved_accounts_index ON message USING GIN(involved_accounts_addresses);
+CREATE INDEX message_value_index ON message USING GIN(value);
 
 /**
  * This function is used to find all the utils that involve any of the given addresses and have
