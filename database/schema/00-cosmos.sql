@@ -115,6 +115,7 @@ CREATE FUNCTION messages_by_address_new(
     RETURNS SETOF message AS
 $$
 SELECT * FROM message AS m 
-WHERE (SELECT CAST(m.value AS TEXT) LIKE CONCAT('%', address ,'%') )
+WHERE (cardinality(types) = 0 OR type = ANY (types))
+  AND (SELECT CAST(m.value AS TEXT) LIKE CONCAT('%', address ,'%') )
 ORDER BY height DESC LIMIT "limit" OFFSET "offset"
 $$ LANGUAGE sql STABLE;
