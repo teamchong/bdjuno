@@ -16,7 +16,7 @@ import (
 	"github.com/forbole/bdjuno/v3/database"
 	"github.com/forbole/bdjuno/v3/modules"
 
-	cmdxapp "github.com/comdex-official/comdex/app"
+	cmdxapp "github.com/CosmosContracts/juno/app"
 	gaiaapp "github.com/cosmos/gaia/v6/app"
 )
 
