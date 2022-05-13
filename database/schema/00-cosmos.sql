@@ -108,13 +108,13 @@ CREATE TABLE pruning
 );
 
 CREATE FUNCTION messages_by_address_new(
-    "addresses" TEXT,
+    address TEXT,
     types TEXT[],
     "limit" BIGINT = 100,
     "offset" BIGINT = 0)
     RETURNS SETOF message AS
 $$
 SELECT * FROM message AS m 
-WHERE (SELECT CAST(m.value AS TEXT) LIKE '%%')
+WHERE (SELECT CAST(m.value AS TEXT) LIKE CONCAT('%', address ,'%') )
 ORDER BY height DESC LIMIT "limit" OFFSET "offset"
 $$ LANGUAGE sql STABLE;
