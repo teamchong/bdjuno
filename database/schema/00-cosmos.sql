@@ -86,28 +86,10 @@ CREATE INDEX message_involved_accounts_index ON message USING GIN(involved_accou
 CREATE INDEX message_value_index ON message USING GIN(value);
 
 /**
- * This function is used to find all the utils that involve any of the given addresses and have
+ * This function is used to find all messages that involve the given addresses and have
  * type that is one of the specified types.
  */
 CREATE FUNCTION messages_by_address(
-    addresses TEXT[],
-    types TEXT[],
-    "limit" BIGINT = 100,
-    "offset" BIGINT = 0)
-    RETURNS SETOF message AS
-$$
-SELECT * FROM message
-WHERE (cardinality(types) = 0 OR type = ANY (types))
-  AND addresses && involved_accounts_addresses
-ORDER BY height DESC LIMIT "limit" OFFSET "offset"
-$$ LANGUAGE sql STABLE;
-
-CREATE TABLE pruning
-(
-    last_pruned_height BIGINT NOT NULL
-);
-
-CREATE FUNCTION messages_by_address_new(
     address TEXT,
     types TEXT[],
     "limit" BIGINT = 100,
@@ -119,3 +101,8 @@ WHERE (cardinality(types) = 0 OR type = ANY (types))
   AND (SELECT CAST(m.value AS TEXT) LIKE CONCAT('%', address ,'%') )
 ORDER BY height DESC LIMIT "limit" OFFSET "offset"
 $$ LANGUAGE sql STABLE;
+
+CREATE TABLE pruning
+(
+    last_pruned_height BIGINT NOT NULL
+);
