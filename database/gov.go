@@ -386,3 +386,23 @@ WHERE proposal_validator_status_snapshot.height <= excluded.height`
 
 	return nil
 }
+
+// SaveUpgradeParams allows to save upgrade parameters
+func (db *Db) SaveUpgradeParams(params types.UpgradeParams) error {
+	stmt := `
+INSERT INTO upgrade_params(binary_version, upgrade_info, upgrade_height, upgrade_time, upgrade_status) 
+VALUES ($1, $2, $3, $4, $5)
+ON CONFLICT (one_row_id) DO UPDATE 
+	SET binary_version = excluded.binary_version,
+  		upgrade_info = excluded.upgrade_info,
+		upgrade_height = excluded.upgrade_height,
+		upgrade_time = excluded.upgrade_time,
+		upgrade_status = excluded.upgrade_status
+WHERE upgrade_params.upgrade_height <= excluded.upgrade_height`
+	_, err := db.Sql.Exec(stmt, params)
+	if err != nil {
+		return fmt.Errorf("error while storing gov params: %s", err)
+	}
+
+	return nil
+}
