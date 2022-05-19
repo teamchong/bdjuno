@@ -103,15 +103,15 @@ func (m *Module) SaveGenesisContracts(contracts []wasmtypes.Contract, doc *tmtyp
 		)
 		genesisContracts[index] = contract
 
+		err = m.db.SaveWasmContracts([]types.WasmContract{contract})
+		if err != nil {
+			return fmt.Errorf("error while saving genesis wasm contracts: %s", err)
+		}
 		if index == 100 {
 			break
 		}
 	}
 
-	err := m.db.SaveWasmContracts(genesisContracts)
-	if err != nil {
-		return fmt.Errorf("error while saving genesis wasm contracts: %s", err)
-	}
 	return nil
 }
 
