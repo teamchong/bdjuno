@@ -79,6 +79,8 @@ func (m *Module) SaveGenesisContracts(contracts []wasmtypes.Contract, doc *tmtyp
 
 	for index, contract := range contracts {
 
+		fmt.Println("contract address: ", contract.ContractAddress)
+
 		// Unpack contract info extension
 		var contractInfoExt string
 		if contract.ContractInfo.Extension != nil {
