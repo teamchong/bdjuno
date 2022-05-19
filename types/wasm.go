@@ -95,8 +95,6 @@ func NewWasmContract(
 }
 
 func ConvertContractStates(states []wasmtypes.Model) []byte {
-	fmt.Println(states)
-
 	var jsonStates = make(map[string]interface{})
 
 	hexZero, _ := hex.DecodeString("00")
@@ -107,7 +105,7 @@ func ConvertContractStates(states []wasmtypes.Model) []byte {
 		if string(state.Key[:1]) == string(hexZero) {
 			key = state.Key[2:]
 		}
-		fmt.Println("key.String(): ", key.String())
+		fmt.Println("2nd key.String(): ", key.String())
 
 		// Decode hex value
 		keyBz, _ := hex.DecodeString(key.String())

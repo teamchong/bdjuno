@@ -77,7 +77,6 @@ func (m *Module) SaveGenesisContracts(contracts []wasmtypes.Contract, doc *tmtyp
 	log.Debug().Str("module", "wasm").Str("operation", "genesis contracts").
 		Int("contract counts", len(contracts)).Msg("parsing genesis")
 
-	var genesisContracts = make([]types.WasmContract, len(contracts))
 	for index, contract := range contracts {
 
 		// Unpack contract info extension
@@ -101,17 +100,17 @@ func (m *Module) SaveGenesisContracts(contracts []wasmtypes.Contract, doc *tmtyp
 			"", contract.ContractInfo.Admin, contract.ContractInfo.CodeID, contract.ContractInfo.Label, nil, nil,
 			contract.ContractAddress, "", doc.GenesisTime, contract.ContractInfo.Creator, contractInfoExt, contractStates, doc.InitialHeight,
 		)
-		genesisContracts[index] = contract
+
+		err = m.db.SaveWasmContracts([]types.WasmContract{contract})
+		if err != nil {
+			return fmt.Errorf("error while saving genesis wasm contracts: %s", err)
+		}
 
 		if index == 5 {
 			break
 		}
 	}
 
-	err := m.db.SaveWasmContracts(genesisContracts)
-	if err != nil {
-		return fmt.Errorf("error while saving genesis wasm contracts: %s", err)
-	}
 	return nil
 }
 
