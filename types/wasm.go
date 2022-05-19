@@ -3,7 +3,6 @@ package types
 import (
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"time"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
@@ -75,8 +74,7 @@ func NewWasmContract(
 	instantiatedAt time.Time, creator string, contractInfoExtension string, states []wasmtypes.Model, height int64,
 ) WasmContract {
 	rawContractMsg, _ := rawMsg.MarshalJSON()
-	contractStateInfo := getContractStateInfo(states)
-	printContractStates(states)
+	contractStateInfo := ConvertContractStates(states)
 
 	return WasmContract{
 		Sender:                sender,
@@ -95,30 +93,25 @@ func NewWasmContract(
 	}
 }
 
-func printContractStates(states []wasmtypes.Model) {
+func ConvertContractStates(states []wasmtypes.Model) []byte {
+	var jsonStates map[string]interface{}
+
+	hexZero, _ := hex.DecodeString("00")
 	for _, state := range states {
-		fmt.Println("state: ", state)
-
-		key, err := hex.DecodeString(state.Key.String())
-		if err != nil {
-			panic(err)
+		key := state.Key
+		// Remove initial \x00 hex characters so the data can be stored in the DB
+		if string(state.Key[:1]) == string(hexZero) {
+			key = state.Key[2:]
 		}
-		fmt.Println("key1: ", string(key))
 
-		key2 := state.Key[1:]
-		key, err = hex.DecodeString(key2.String())
-		if err != nil {
-			panic(err)
-		}
-		fmt.Println("key2: ", string(key))
+		// Decode hex value
+		keyBz, _ := hex.DecodeString(string(key))
 
-		key3 := state.Key[2:]
-		key, err = hex.DecodeString(key3.String())
-		if err != nil {
-			panic(err)
-		}
-		fmt.Println("key3: ", string(key))
+		jsonStates[string(keyBz)] = string(state.Value)
 	}
+	jsonStatesBz, _ := json.Marshal(&jsonStates)
+
+	return jsonStatesBz
 }
 
 func getContractStateInfo(states []wasmtypes.Model) []byte {
