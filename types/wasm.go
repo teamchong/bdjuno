@@ -103,21 +103,21 @@ func printContractStates(states []wasmtypes.Model) {
 		if err != nil {
 			panic(err)
 		}
-		fmt.Println("key1: ", key)
+		fmt.Println("key1: ", string(key))
 
 		key2 := state.Key[1:]
 		key, err = hex.DecodeString(key2.String())
 		if err != nil {
 			panic(err)
 		}
-		fmt.Println("key2: ", key)
+		fmt.Println("key2: ", string(key))
 
 		key3 := state.Key[2:]
 		key, err = hex.DecodeString(key3.String())
 		if err != nil {
 			panic(err)
 		}
-		fmt.Println("key3: ", key)
+		fmt.Println("key3: ", string(key))
 	}
 }
 
