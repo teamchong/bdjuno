@@ -9,6 +9,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	juno "github.com/forbole/juno/v3/types"
 )
 
@@ -76,6 +77,20 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypes.M
 		proposal.VotingEndTime,
 		msg.Proposer,
 	)
+	if proposal.ProposalType() == upgradetypes.ProposalTypeSoftwareUpgrade {
+		var parsedMessage upgradetypes.SoftwareUpgradeProposal
+
+		err = m.cdc.UnpackAny(proposal.Content, &parsedMessage)
+		if err != nil {
+			return fmt.Errorf("error while unpacking genesis contract info extension: %s", err)
+		}
+
+		fmt.Printf("\n ********** \n")
+		fmt.Printf("\n parsedMessage %v \n", parsedMessage)
+		fmt.Printf("\n ********** \n")
+
+	}
+
 	err = m.db.SaveProposals([]types.Proposal{proposalObj})
 	if err != nil {
 		return err

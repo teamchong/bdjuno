@@ -7,13 +7,10 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/gogo/protobuf/proto"
-	"github.com/rs/zerolog/log"
 
 	"github.com/forbole/bdjuno/v3/types"
 
 	dbtypes "github.com/forbole/bdjuno/v3/database/types"
-
-	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
 	"github.com/lib/pq"
 )
@@ -147,18 +144,34 @@ INSERT INTO proposal(
 			proposal.VotingStartTime,
 			proposal.VotingEndTime,
 		)
-		fmt.Printf("\n ********** \n")
-		if proposal.ProposalType == upgradetypes.ProposalTypeSoftwareUpgrade {
-			var parsedMessage upgradetypes.SoftwareUpgradeProposal
-			if err := proto.Unmarshal(contentBz, &parsedMessage); err != nil {
-				log.Error().Err(err).Msg("Could not parse SoftwareUpgradeProposal")
+		// fmt.Printf("\n ********** \n")
+		// if proposal.ProposalType == upgradetypes.ProposalTypeSoftwareUpgrade {
+		// 	var parsedMessage upgradetypes.SoftwareUpgradeProposal
 
-				return nil
-			} else {
-				fmt.Printf("\n info: %s, height: %d, name: %s \n", parsedMessage.Plan.Info, parsedMessage.Plan.Height, parsedMessage.Plan.Name)
-				return nil
-			}
-		}
+		// 	// err := cdc.UnpackAny(contract.ContractInfo.Extension, &extentionI)
+		// 	// if err != nil {
+		// 	// 	return fmt.Errorf("error while unpacking genesis contract info extension: %s", err)
+		// 	// }
+
+		// 	if err := proto.Unmarshal(contentBz, &parsedMessage); err != nil {
+		// 		log.Error().Err(err).Msg("Could not parse SoftwareUpgradeProposal")
+
+		// 		return nil
+		// 	} else {
+		// 		fmt.Printf("\n info: %s, height: %d, name: %s \n", parsedMessage.Plan.Info, parsedMessage.Plan.Height, parsedMessage.Plan.Name)
+		// 		return nil
+		// 	}
+		// }
+
+		// 	var contractInfoExt string
+		// if contract.ContractInfo.Extension != nil {
+		// 	var extentionI wasmtypes.ContractInfoExtension
+		// 	err := m.cdc.UnpackAny(contract.ContractInfo.Extension, &extentionI)
+		// 	if err != nil {
+		// 		return fmt.Errorf("error while unpacking genesis contract info extension: %s", err)
+		// 	}
+		// 	contractInfoExt = extentionI.String()
+		// }
 	}
 
 	// Store the accounts
