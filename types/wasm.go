@@ -100,15 +100,16 @@ func ConvertContractStates(states []wasmtypes.Model) []byte {
 	hexZero, _ := hex.DecodeString("00")
 	for _, state := range states {
 		key := state.Key
-		// Remove initial \x00 hex characters so the data can be stored in the DB
+		// Remove initial 2 hex characters if the first is \x00
 		if string(state.Key[:1]) == string(hexZero) {
 			key = state.Key[2:]
 		}
 
 		// Remove \x00 hex characters in the middle
-		for i, b := range key {
-			if string(b) == string(hexZero) {
+		for i := 0; i < len(key); i++ {
+			if string(key[i]) == string(hexZero) {
 				key = append(key[:i], key[i+1:]...)
+				i--
 			}
 		}
 
