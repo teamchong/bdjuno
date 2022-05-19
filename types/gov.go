@@ -285,8 +285,7 @@ func NewProposalValidatorStatusSnapshot(
 type UpgradeParams struct {
 	BinaryVersion string
 	UpgradeInfo   string
-	UpgradeHeight string
-	UpgradeTime   time.Time
+	UpgradeHeight int64
 	UpgradeStatus string
 }
 
@@ -294,14 +293,12 @@ type UpgradeParams struct {
 func NewUpgradeParams(
 	binaryVersion string,
 	upgradeInfo string,
-	upgradeHeight string,
-	upgradeTime time.Time,
+	upgradeHeight int64,
 	upgradeStatus string) UpgradeParams {
 	return UpgradeParams{
 		BinaryVersion: binaryVersion,
 		UpgradeInfo:   upgradeInfo,
 		UpgradeHeight: upgradeHeight,
-		UpgradeTime:   upgradeTime,
 		UpgradeStatus: upgradeStatus,
 	}
 }

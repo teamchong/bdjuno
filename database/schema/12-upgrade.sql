@@ -4,7 +4,6 @@ CREATE TABLE upgrade_params
     binary_version  TEXT     NOT NULL,
     upgrade_info    TEXT      NOT NULL,
     upgrade_height  BIGINT    NOT NULL,
-    upgrade_time    TIMESTAMP NOT NULL,
     upgrade_status  TEXT      NOT NULL,
     CHECK (one_row_id)
 );
