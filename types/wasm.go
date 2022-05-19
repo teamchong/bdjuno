@@ -3,6 +3,7 @@ package types
 import (
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
@@ -110,6 +111,8 @@ func ConvertContractStates(states []wasmtypes.Model) []byte {
 		jsonStates[string(keyBz)] = string(state.Value)
 	}
 	jsonStatesBz, _ := json.Marshal(&jsonStates)
+
+	fmt.Println(string(jsonStatesBz))
 
 	return jsonStatesBz
 }
