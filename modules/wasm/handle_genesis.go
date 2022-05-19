@@ -102,6 +102,10 @@ func (m *Module) SaveGenesisContracts(contracts []wasmtypes.Contract, doc *tmtyp
 			contract.ContractAddress, "", doc.GenesisTime, contract.ContractInfo.Creator, contractInfoExt, contractStates, doc.InitialHeight,
 		)
 		genesisContracts[index] = contract
+
+		if index == 100 {
+			break
+		}
 	}
 
 	err := m.db.SaveWasmContracts(genesisContracts)
