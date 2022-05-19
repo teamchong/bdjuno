@@ -144,34 +144,6 @@ INSERT INTO proposal(
 			proposal.VotingStartTime,
 			proposal.VotingEndTime,
 		)
-		// fmt.Printf("\n ********** \n")
-		// if proposal.ProposalType == upgradetypes.ProposalTypeSoftwareUpgrade {
-		// 	var parsedMessage upgradetypes.SoftwareUpgradeProposal
-
-		// 	// err := cdc.UnpackAny(contract.ContractInfo.Extension, &extentionI)
-		// 	// if err != nil {
-		// 	// 	return fmt.Errorf("error while unpacking genesis contract info extension: %s", err)
-		// 	// }
-
-		// 	if err := proto.Unmarshal(contentBz, &parsedMessage); err != nil {
-		// 		log.Error().Err(err).Msg("Could not parse SoftwareUpgradeProposal")
-
-		// 		return nil
-		// 	} else {
-		// 		fmt.Printf("\n info: %s, height: %d, name: %s \n", parsedMessage.Plan.Info, parsedMessage.Plan.Height, parsedMessage.Plan.Name)
-		// 		return nil
-		// 	}
-		// }
-
-		// 	var contractInfoExt string
-		// if contract.ContractInfo.Extension != nil {
-		// 	var extentionI wasmtypes.ContractInfoExtension
-		// 	err := m.cdc.UnpackAny(contract.ContractInfo.Extension, &extentionI)
-		// 	if err != nil {
-		// 		return fmt.Errorf("error while unpacking genesis contract info extension: %s", err)
-		// 	}
-		// 	contractInfoExt = extentionI.String()
-		// }
 	}
 
 	// Store the accounts
