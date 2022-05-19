@@ -6,6 +6,9 @@ import (
 	"strconv"
 
 	"github.com/forbole/bdjuno/v3/types"
+	"github.com/rs/zerolog/log"
+
+	"github.com/gogo/protobuf/proto"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
@@ -77,18 +80,21 @@ func (m *Module) handleMsgSubmitProposal(tx *juno.Tx, index int, msg *govtypes.M
 		proposal.VotingEndTime,
 		msg.Proposer,
 	)
+
 	if proposal.ProposalType() == upgradetypes.ProposalTypeSoftwareUpgrade {
 		var parsedMessage upgradetypes.SoftwareUpgradeProposal
 
-		err = m.cdc.UnpackAny(proposal.Content, &parsedMessage)
-		if err != nil {
-			return fmt.Errorf("error while unpacking genesis contract info extension: %s", err)
+		if err := proto.Unmarshal(proposal.Content.Value, &parsedMessage); err != nil {
+			log.Error().Err(err).Msg("error while parsing SoftwareUpgradeProposal proposal")
+		} else {
+			upgradeParams := types.NewUpgradeParams(parsedMessage.Plan.Name, parsedMessage.Plan.Info, parsedMessage.Plan.Height, proposal.Status.String())
+			fmt.Printf("\n upgradeParams %v \n", upgradeParams)
+
+			err := m.db.SaveUpgradeParams(upgradeParams)
+			if err != nil {
+				return err
+			}
 		}
-
-		fmt.Printf("\n ********** \n")
-		fmt.Printf("\n parsedMessage %v \n", parsedMessage)
-		fmt.Printf("\n ********** \n")
-
 	}
 
 	err = m.db.SaveProposals([]types.Proposal{proposalObj})
