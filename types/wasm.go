@@ -100,17 +100,20 @@ func ConvertContractStates(states []wasmtypes.Model) []byte {
 	hexZero, _ := hex.DecodeString("00")
 	for _, state := range states {
 		key := state.Key
-		fmt.Println("key.String(): ", key.String())
 		// Remove initial \x00 hex characters so the data can be stored in the DB
 		if string(state.Key[:1]) == string(hexZero) {
 			key = state.Key[2:]
 		}
-		fmt.Println("2nd key.String(): ", key.String())
+
+		// Remove \x00 hex characters in the middle
+		for i, b := range key {
+			if string(b) == string(hexZero) {
+				key = append(key[:i], key[i+1:]...)
+			}
+		}
 
 		// Decode hex value
 		keyBz, _ := hex.DecodeString(key.String())
-
-		fmt.Println("string(keyBz): ", string(keyBz))
 
 		jsonStates[string(keyBz)] = string(state.Value)
 	}
