@@ -94,7 +94,7 @@ func NewWasmContract(
 }
 
 func ConvertContractStates(states []wasmtypes.Model) []byte {
-	var jsonStates map[string]interface{}
+	var jsonStates = make(map[string]interface{})
 
 	hexZero, _ := hex.DecodeString("00")
 	for _, state := range states {
