@@ -17,6 +17,9 @@ import (
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	"github.com/gogo/protobuf/proto"
+	"github.com/rs/zerolog/log"
 )
 
 func (m *Module) UpdateProposal(height int64, blockVals *tmctypes.ResultValidators, id uint64) error {
@@ -34,6 +37,11 @@ func (m *Module) UpdateProposal(height int64, blockVals *tmctypes.ResultValidato
 	err = m.handleParamChangeProposal(height, proposal)
 	if err != nil {
 		return fmt.Errorf("error while updating params from ParamChangeProposal: %s", err)
+	}
+
+	err = m.handleSoftwareUpgradeProposal(proposal)
+	if err != nil {
+		return fmt.Errorf("error while updating upgrade info from SoftwareUpgradeProposal: %s", err)
 	}
 
 	err = m.updateProposalStatus(proposal)
@@ -268,4 +276,30 @@ func findStatus(consAddr string, statuses []types.ValidatorStatus) (types.Valida
 		}
 	}
 	return types.ValidatorStatus{}, fmt.Errorf("cannot find status for validator with consensus address %s", consAddr)
+}
+
+// handleSoftwareUpgradeProposal stores upgrade info if a SoftwareUpgradeProposal has passed
+func (m *Module) handleSoftwareUpgradeProposal(proposal govtypes.Proposal) error {
+	if proposal.Status.String() != types.ProposalStatusPassed {
+		// If the status of SoftwareUpgradeProposal is not passed, do nothing
+		return nil
+	}
+
+	if proposal.ProposalType() == upgradetypes.ProposalTypeSoftwareUpgrade {
+		var parsedMessage upgradetypes.SoftwareUpgradeProposal
+
+		if err := proto.Unmarshal(proposal.Content.Value, &parsedMessage); err != nil {
+			log.Error().Err(err).Msg("error while handling SoftwareUpgradeProposal")
+		} else {
+			upgradeParams := types.NewUpgradeParams(parsedMessage.Plan.Name, parsedMessage.Plan.Info, parsedMessage.Plan.Height, proposal.Status.String())
+			fmt.Printf("\n upgradeParams %v \n", upgradeParams)
+
+			err := m.db.SaveUpgradeParams(upgradeParams)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }
