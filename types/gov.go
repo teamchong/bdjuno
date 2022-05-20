@@ -302,3 +302,12 @@ func NewUpgradeParams(
 		UpgradeStatus: upgradeStatus,
 	}
 }
+
+// UpgradeParamsRow contains the row info of the on-chain upgrade
+type UpgradeParamsRow struct {
+	OneRowID      bool   `db:"one_row_id"`
+	BinaryVersion string `db:"binary_version"`
+	UpgradeInfo   string `db:"upgrade_info"`
+	UpgradeHeight int64  `db:"upgrade_height"`
+	UpgradeStatus string `db:"upgrade_status"`
+}

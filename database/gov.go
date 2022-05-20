@@ -408,12 +408,16 @@ WHERE upgrade_params.upgrade_height <= excluded.upgrade_height`
 
 // GetUpgradeHeight returns the planned upgrade height stored in database
 func (db *Db) GetUpgradeHeight() (int64, error) {
-	stmt := `SELECT upgrade_height FROM upgrade_params`
+	stmt := `SELECT * FROM upgrade_params`
 
-	var blocks int64
-	if err := db.Sqlx.Select(&blocks, stmt); err != nil {
+	var upgradeParams []types.UpgradeParamsRow
+	if err := db.Sqlx.Select(&upgradeParams, stmt); err != nil {
 		return 0, err
 	}
 
-	return blocks, nil
+	if len(upgradeParams) == 0 {
+		return 0, fmt.Errorf("cannot get upgrade params")
+	}
+
+	return upgradeParams[0].UpgradeHeight, nil
 }
