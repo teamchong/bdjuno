@@ -331,8 +331,12 @@ func (m *Module) checkUpgradeHeight() error {
 	}
 
 	if currentHeight > upgradeHeight {
+		err := m.db.DeleteUpgradeInfo(upgradeHeight)
+		if err != nil {
+			return fmt.Errorf("error while deleting old upgrade info: %s", err)
+		}
 		// panic if the latest height is greater than the upgrade height
-		panic(fmt.Errorf("The current height is greater than scheduled upgrade height. Stopping BDJuno..."))
+		panic(fmt.Errorf("current height is greater than scheduled upgrade height. Stopping BDJuno... "))
 	}
 	return nil
 }
