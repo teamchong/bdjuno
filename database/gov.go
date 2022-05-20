@@ -421,3 +421,13 @@ func (db *Db) GetUpgradeHeight() (int64, error) {
 
 	return upgradeParams[0].UpgradeHeight, nil
 }
+
+// DeleteUpgradeInfo removes upgrade info from db after the upgrade has been finished
+func (db *Db) DeleteUpgradeInfo(upgradeHeight int64) error {
+	_, err := db.Sql.Exec(`DELETE FROM upgrade_params WHERE upgrade_height = $1`, upgradeHeight)
+	if err != nil {
+		return fmt.Errorf("error while deleting upgrade info: %s", err)
+	}
+
+	return nil
+}
