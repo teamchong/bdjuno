@@ -3,15 +3,18 @@ package gov
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	"github.com/go-co-op/gocron"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"google.golang.org/grpc/codes"
 
+	"github.com/forbole/bdjuno/v3/modules/utils"
 	"github.com/forbole/bdjuno/v3/types"
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -301,5 +304,35 @@ func (m *Module) handleSoftwareUpgradeProposal(proposal govtypes.Proposal) error
 		}
 	}
 
+	// Start periodic operations
+	scheduler := gocron.NewScheduler(time.UTC)
+
+	if _, err := scheduler.Every(1).Hour().Do(func() {
+		utils.WatchMethod(m.checkUpgradeHeight)
+	}); err != nil {
+		return fmt.Errorf("error while setting up upgrade periodic operation: %s", err)
+	}
+
+	scheduler.StartAsync()
+
+	return nil
+}
+
+// checkUpgradeHeight checks if the current height is grater than the scheduled upgrade height
+// panics if true
+func (m *Module) checkUpgradeHeight() error {
+	currentHeight, err := m.db.GetLastBlockHeight()
+	if err != nil {
+		return fmt.Errorf("error while getting current block height %s", err)
+	}
+	upgradeHeight, err := m.db.GetUpgradeHeight()
+	if err != nil {
+		return fmt.Errorf("error while getting upgrade block height: %s", err)
+	}
+
+	if currentHeight > upgradeHeight {
+		// panic if the latest height is greater than the upgrade height
+		panic(fmt.Errorf("The current height is greater than scheduled upgrade height. Stopping BDJuno..."))
+	}
 	return nil
 }
