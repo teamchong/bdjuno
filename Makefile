@@ -1,6 +1,9 @@
 VERSION := $(shell echo $(shell git describe --tags) | sed 's/^v//')
 COMMIT  := $(shell git log -1 --format='%H')
 
+REPOSITORY_URL := $(shell echo $(REPOSITORY_URL))
+UPGRADE_VERSION := $(shell echo $(BINARY_VERSION))
+UPGRADE_PATH := "$(REPOSITORY_URL)@$(UPGRADE_VERSION)"
 export GO111MODULE = on
 
 ###############################################################################
@@ -31,6 +34,17 @@ else
 	@go build -mod=readonly $(BUILD_FLAGS) -o build/bdjuno ./cmd/bdjuno
 endif
 .PHONY: build
+
+###############################################################################
+###                                  Upgrade                                ###
+###############################################################################
+
+upgrade:
+	@echo "updating bdjuno binary..."
+	@echo "UPGRADE_VERSION $(UPGRADE_VERSION)"
+	@go get $(UPGRADE_PATH)
+	@go mod tidy -compat=1.17
+.PHONY: upgrade
 
 ###############################################################################
 ###                                 Install                                 ###
