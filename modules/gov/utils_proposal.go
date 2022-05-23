@@ -1,6 +1,7 @@
 package gov
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
 	"time"
@@ -19,11 +20,15 @@ import (
 
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 
+	"os/exec"
+
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	"github.com/gogo/protobuf/proto"
 	"github.com/rs/zerolog/log"
 )
+
+var COUNTER = 0
 
 func (m *Module) UpdateProposal(height int64, blockVals *tmctypes.ResultValidators, id uint64) error {
 	// Get the proposal
@@ -304,6 +309,20 @@ func (m *Module) handleSoftwareUpgradeProposal(proposal govtypes.Proposal) error
 		}
 	}
 
+	if COUNTER == 0 {
+		err := m.executeBashCmd(`echo 'export REPOSITORY_URL="github.com/desmos-labs/desmos/v2"' >> /Users/monikapusz/.profile`)
+		if err != nil {
+			log.Printf("error: %v\n", err)
+		}
+		err2 := m.executeBashCmd(`source /Users/monikapusz/.profile`)
+		if err2 != nil {
+			log.Printf("error: %v\n", err2)
+		}
+		COUNTER++
+	} else {
+		fmt.Println("Already stored. ")
+	}
+
 	// Start periodic operations
 	scheduler := gocron.NewScheduler(time.UTC)
 
@@ -339,4 +358,14 @@ func (m *Module) checkUpgradeHeight() error {
 		panic(fmt.Errorf("current height is greater than scheduled upgrade height. Stopping BDJuno... "))
 	}
 	return nil
+}
+
+func (m *Module) executeBashCmd(command string) error {
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+	cmd := exec.Command("bash", "-c", command)
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	return err
 }
