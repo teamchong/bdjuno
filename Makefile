@@ -4,6 +4,8 @@ COMMIT  := $(shell git log -1 --format='%H')
 REPOSITORY_URL := $(shell echo $(REPOSITORY_URL))
 UPGRADE_VERSION := $(shell echo $(BINARY_VERSION))
 UPGRADE_PATH := "$(REPOSITORY_URL)@$(UPGRADE_VERSION)"
+BDJUNO_BRANCH := $(shell echo $(shell git rev-parse --abbrev-ref HEAD))
+
 export GO111MODULE = on
 
 ###############################################################################
@@ -44,6 +46,10 @@ upgrade:
 	@echo "UPGRADE_VERSION $(UPGRADE_VERSION)"
 	@go get $(UPGRADE_PATH)
 	@go mod tidy -compat=1.17
+	@git checkout -b merge/${BDJUNO_BRANCH}
+	@git add .
+	@git commit -m "build(deps): updated $(UPGRADE_PATH) version"
+	@git push origin merge/${BDJUNO_BRANCH}
 .PHONY: upgrade
 
 ###############################################################################
