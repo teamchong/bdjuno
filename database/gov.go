@@ -422,6 +422,22 @@ func (db *Db) GetUpgradeHeight() (int64, error) {
 	return upgradeParams[0].UpgradeHeight, nil
 }
 
+// GetUpgradeDetails returns the details of the planned upgrade stored in database
+func (db *Db) GetUpgradeDetails() ([]types.UpgradeParamsRow, error) {
+	stmt := `SELECT * FROM upgrade_params`
+
+	var upgradeParams []types.UpgradeParamsRow
+	if err := db.Sqlx.Select(&upgradeParams, stmt); err != nil {
+		return []types.UpgradeParamsRow{}, err
+	}
+
+	if len(upgradeParams) == 0 {
+		return []types.UpgradeParamsRow{}, fmt.Errorf("cannot get upgrade params")
+	}
+
+	return upgradeParams, nil
+}
+
 // DeleteUpgradeInfo removes upgrade info from db after the upgrade has been finished
 func (db *Db) DeleteUpgradeInfo(upgradeHeight int64) error {
 	_, err := db.Sql.Exec(`DELETE FROM upgrade_params WHERE upgrade_height = $1`, upgradeHeight)
