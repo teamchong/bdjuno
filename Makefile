@@ -50,6 +50,7 @@ upgrade:
 	@git add .
 	@git commit -m "build(deps): updated $(UPGRADE_PATH) version"
 	@git push origin merge/${BDJUNO_BRANCH}
+	#@git request-pull ${BDJUNO_BRANCH} merge/${BDJUNO_BRANCH}
 .PHONY: upgrade
 
 ###############################################################################
