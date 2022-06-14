@@ -7,7 +7,7 @@ array_relationships:
     foreign_key_constraint_on:
       column: pool_id
       table:
-        name: public_shield_purchase
+        name: shield_purchase
         schema: public
 select_permissions:
 - permission:
