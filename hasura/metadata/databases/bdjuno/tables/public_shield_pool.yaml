@@ -2,7 +2,7 @@ table:
   name: shield_pool
   schema: public
 array_relationships:
-- name: purchases
+- name: shield_purchases
   using:
     foreign_key_constraint_on:
       column: pool_id
